@@ -31,7 +31,11 @@ public class IngestInvoicePdfFromTextract {
             invoice.setSuministro(textractResult.getHeaderMap().get(CommonName.SUMINISTRO.getName()));
             invoice.setNumeroFactura(textractResult.getHeaderMap().get(CommonName.NUMERO_FACTURA.getName()));
             try {
-                BigDecimal total = new BigDecimal(textractResult.getHeaderMap().get(CommonName.TOTAL_A_PAGAR.getName()));
+                String totalStr = textractResult.getHeaderMap().get(CommonName.TOTAL_A_PAGAR.getName())
+                        .replace("$", "")
+                        .replace(".","")
+                        .replace(",",".").trim();
+                BigDecimal total = new BigDecimal(totalStr);
                 invoice.setTotal(total);
             } catch (Exception e) {
                 log.error("Error trying to parse total", e);

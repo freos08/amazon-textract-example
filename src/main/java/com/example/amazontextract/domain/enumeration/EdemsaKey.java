@@ -2,7 +2,7 @@ package com.example.amazontextract.domain.enumeration;
 
 public enum EdemsaKey {
     NIC("NIC", CommonName.NIC.getName()),
-    SUMINISTRO("Id - Suministro", CommonName.SUMINISTRO.getName()),
+    SUMINISTRO("Id Suministro", CommonName.SUMINISTRO.getName()),
     NUMERO_FACTURA("FACTURA N°:", CommonName.NUMERO_FACTURA.getName()),
     TOTAL_A_PAGAR("TOTAL A PAGAR", CommonName.TOTAL_A_PAGAR.getName()),
     CONCEPTOS_ELECTRICOS("1. Conceptos Eléctricos", CommonName.CONCEPTOS_ELECTRICOS.getName());

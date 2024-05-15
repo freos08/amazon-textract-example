@@ -1,4 +1,4 @@
-package com.example.amazontextract.module.common;
+package com.example.amazontextract.service.module.common;
 
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.textract.model.Block;
@@ -11,7 +11,8 @@ import java.util.List;
 @Service
 public class TextractTableGenerator {
 
-    public String[][] generateTableFromRelationship(List<Relationship> relationships, List<Block> cellBlocks, List<Block> lineBlocks, String[][] tableMap) {
+    public String[][] generateTableFromRelationship(List<Relationship> relationships, List<Block> cellBlocks, List<Block> lineBlocks) {
+        String[][] tableMap = new String[0][0];
         if (relationships != null && !relationships.isEmpty()) {
             for (int x = 0; x < relationships.size(); x++) {
                 Relationship relationship = relationships.get(x);

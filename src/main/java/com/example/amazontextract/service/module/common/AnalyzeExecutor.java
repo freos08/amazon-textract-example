@@ -1,4 +1,4 @@
-package com.example.amazontextract.module.common;
+package com.example.amazontextract.service.module.common;
 
 import com.example.amazontextract.domain.TextractResult;
 import com.example.amazontextract.service.process.IngestInvoicePdfFromTextract;
@@ -9,13 +9,13 @@ import software.amazon.awssdk.services.textract.model.Block;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class InvoiceAnalyzeExecutor {
+public abstract class AnalyzeExecutor {
 
-    private final Logger log = LoggerFactory.getLogger(InvoiceAnalyzeExecutor.class);
+    private final Logger log = LoggerFactory.getLogger(AnalyzeExecutor.class);
 
     private final IngestInvoicePdfFromTextract ingestInvoicePdfFromTextract;
 
-    protected InvoiceAnalyzeExecutor(IngestInvoicePdfFromTextract ingestInvoicePdfFromTextract) {
+    protected AnalyzeExecutor(IngestInvoicePdfFromTextract ingestInvoicePdfFromTextract) {
         this.ingestInvoicePdfFromTextract = ingestInvoicePdfFromTextract;
     }
 

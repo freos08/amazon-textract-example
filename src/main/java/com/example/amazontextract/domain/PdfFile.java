@@ -2,29 +2,19 @@ package com.example.amazontextract.domain;
 
 public class PdfFile {
 
-    private String pdfFile; // S3 path
-    private boolean avoidDuplicates;
+    private String document; // S3 document path
     private String template;
 
-    public void PdfFile(String pdfFile, boolean avoidDuplicates) {
-        this.pdfFile = pdfFile;
-        this.avoidDuplicates = avoidDuplicates;
+    public void PdfFile(String document) {
+        this.document = document;
     }
 
-    public String getPdfFile() {
-        return pdfFile;
+    public String getDocument() {
+        return document;
     }
 
-    public void setPdfFile(String pdfFile) {
-        this.pdfFile = pdfFile;
-    }
-
-    public boolean isAvoidDuplicates() {
-        return avoidDuplicates;
-    }
-
-    public void setAvoidDuplicates(boolean avoidDuplicates) {
-        this.avoidDuplicates = avoidDuplicates;
+    public void setDocument(String document) {
+        this.document = document;
     }
 
     public String getTemplate() {

@@ -1,9 +1,9 @@
-package com.example.amazontextract.module.edemsa;
+package com.example.amazontextract.service.module.edemsa;
 
 import com.example.amazontextract.domain.TextractResult;
 import com.example.amazontextract.domain.enumeration.EdemsaKey;
-import com.example.amazontextract.module.common.InvoiceAnalyzeExecutor;
-import com.example.amazontextract.module.common.TextractTableGenerator;
+import com.example.amazontextract.service.module.common.AnalyzeExecutor;
+import com.example.amazontextract.service.module.common.TextractTableGenerator;
 import com.example.amazontextract.service.process.IngestInvoicePdfFromTextract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Service
 //@Transactional
-public class EdemsaAnalyzeExecutor extends InvoiceAnalyzeExecutor {
+public class EdemsaAnalyzeExecutor extends AnalyzeExecutor {
 
     private final Logger log = LoggerFactory.getLogger(EdemsaAnalyzeExecutor.class);
 
@@ -48,25 +48,22 @@ public class EdemsaAnalyzeExecutor extends InvoiceAnalyzeExecutor {
 
         //iterating over Tables
         for (Block block : tableBlocks) {
-            String[][] tableMap = new String[0][0];
             List<Relationship> relationships = block.relationships();
-            tableMap = textractTableGenerator.generateTableFromRelationship(relationships, cellBlocks, lineBlocks,
-                    tableMap);
+            String[][] tableMap = textractTableGenerator.generateTableFromRelationship(relationships, cellBlocks, lineBlocks);
 
             if (EdemsaKey.TOTAL_A_PAGAR.getKey().equalsIgnoreCase(tableMap[0][0])) {
                 // header table
                 headerMap.put(EdemsaKey.TOTAL_A_PAGAR.getName(), tableMap[1][0]);
             }
 
-            if (EdemsaKey.NUMERO_FACTURA.getKey().equalsIgnoreCase(tableMap[0][1])) {
+            if (tableMap[0][0] != null && tableMap[0][0].startsWith(EdemsaKey.NUMERO_FACTURA.getKey())) {
                 headerMap.put(EdemsaKey.NUMERO_FACTURA.getName(),
-                        tableMap[0][1].split(EdemsaKey.NUMERO_FACTURA.getKey())[1]);
+                        tableMap[0][0].split(EdemsaKey.NUMERO_FACTURA.getKey())[1]);
             }
 
             if (EdemsaKey.CONCEPTOS_ELECTRICOS.getKey().equalsIgnoreCase(tableMap[0][0]) && tableMap[0].length == 2) {
                 chargeTable = tableMap;
             }
-
         }
         textractResult.setHeaderMap(headerMap);
         textractResult.setChargesTable(chargeTable);

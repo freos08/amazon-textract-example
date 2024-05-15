@@ -16,20 +16,9 @@ public class InvoiceController {
     private final InvoiceService invoiceService;
     private final Logger log = LoggerFactory.getLogger(InvoiceController.class);
 
-//    @Autowired
     public InvoiceController(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
-
-//    @GetMapping
-//    public List<Invoice> getAllInvoices() {
-//        return invoiceService.findAll();
-//    }
-//
-//    @GetMapping("/{id}")
-//    public Invoice getInvoiceById(@PathVariable Long id) {
-//        return invoiceService.findById(id).orElse(null);
-//    }
 
     /**
      * POST  /invoices : process PDF file.

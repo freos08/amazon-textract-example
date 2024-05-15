@@ -1,4 +1,4 @@
-package com.example.amazontextract.module.common;
+package com.example.amazontextract.service.module.common;
 
 import com.example.amazontextract.domain.PdfFile;
 import org.slf4j.Logger;
@@ -20,16 +20,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ProcessPdf {
+public class TextractService {
 
-    private static final Logger log = LoggerFactory.getLogger(ProcessPdf.class);
+    private static final Logger log = LoggerFactory.getLogger(TextractService.class);
 
     public TextractClient init(PdfFile pdfFile) {
-        log.info("Starting PDF process with textract for {} ", pdfFile.getPdfFile());
+        log.info("Starting PDF process with textract for {} ", pdfFile.getDocument());
         return TextractClient.builder()
             .region(Region.US_WEST_2)
             .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
             .build();
+    }
+
+    public String startDocumentAnalysis(TextractClient textractClient, String bucket, String document) {
+        log.info("Start Document Analysis");
+
+        List<FeatureType> myList = new ArrayList<>();
+        myList.add(FeatureType.TABLES);
+        myList.add(FeatureType.FORMS);
+
+        S3Object s3Object = S3Object.builder()
+                .bucket(bucket)
+                .name(document)
+                .build();
+
+        DocumentLocation location = DocumentLocation.builder()
+                .s3Object(s3Object)
+                .build();
+
+        StartDocumentAnalysisRequest req = StartDocumentAnalysisRequest.builder()
+                .documentLocation(location)
+                .featureTypes(myList)
+                .build();
+
+        StartDocumentAnalysisResponse startDocumentAnalysisResult = textractClient.startDocumentAnalysis(req);
+
+        if (startDocumentAnalysisResult != null) {
+            return startDocumentAnalysisResult.jobId();
+        } else {
+            return null;
+        }
     }
 
     public String processDocument(String startJobId, TextractClient textractClient) {
@@ -41,37 +71,6 @@ public class ProcessPdf {
         GetDocumentAnalysisResponse response = textractClient.getDocumentAnalysis(analysisRequest);
         log.debug("Status of jobId {} is {}", startJobId, response.jobStatus());
         return response.jobStatus().toString();
-    }
-
-    public String startDocumentAnalysis(TextractClient textractClient, String bucket, String document) {
-        log.info("Start Document Analysis");
-
-        List<FeatureType> myList = new ArrayList<>();
-        myList.add(FeatureType.TABLES);
-        myList.add(FeatureType.FORMS);
-
-        S3Object s3Object = S3Object.builder()
-            .bucket(bucket)
-            .name(document)
-            .build();
-
-        DocumentLocation location = DocumentLocation.builder()
-            .s3Object(s3Object)
-            .build();
-
-
-        StartDocumentAnalysisRequest req = StartDocumentAnalysisRequest.builder()
-            .documentLocation(location)
-            .featureTypes(myList)
-            .build();
-
-        StartDocumentAnalysisResponse startDocumentAnalysisResult = textractClient.startDocumentAnalysis(req);
-
-        if (startDocumentAnalysisResult != null) {
-            return startDocumentAnalysisResult.jobId();
-        } else {
-            return null;
-        }
     }
 
     public String getDocumentAnalysisResult(int maxResults, String startJobId, String paginationToken, TextractClient textractClient, List<Block> blocks) {

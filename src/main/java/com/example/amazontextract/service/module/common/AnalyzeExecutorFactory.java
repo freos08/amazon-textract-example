@@ -1,26 +1,26 @@
-package com.example.amazontextract.module.common;
+package com.example.amazontextract.service.module.common;
 
-import com.example.amazontextract.module.edemsa.EdemsaAnalyzeExecutor;
+import com.example.amazontextract.service.module.edemsa.EdemsaAnalyzeExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
-public class InvoiceAnalyzeExecutorFactory {
+public class AnalyzeExecutorFactory {
 
-    public static final Logger log = LoggerFactory.getLogger(InvoiceAnalyzeExecutorFactory.class);
+    public static final Logger log = LoggerFactory.getLogger(AnalyzeExecutorFactory.class);
 
     private final ApplicationContext context;
 
-    public InvoiceAnalyzeExecutorFactory(ApplicationContext context) {
+    public AnalyzeExecutorFactory(ApplicationContext context) {
         this.context = context;
     }
 
-    public InvoiceAnalyzeExecutor getInstance(String template) {
+    public AnalyzeExecutor getInstance(String template) {
         String moduleClass = getClassNameFromSender(template);
         try {
-            return (InvoiceAnalyzeExecutor) context.getBean(Class.forName(moduleClass));
+            return (AnalyzeExecutor) context.getBean(Class.forName(moduleClass));
         } catch (ClassNotFoundException e) {
             log.error("Module {} was not found.", moduleClass, e);
             return null;
