@@ -5,10 +5,6 @@ public class PdfFile {
     private String document; // S3 document path
     private String template;
 
-    public void PdfFile(String document) {
-        this.document = document;
-    }
-
     public String getDocument() {
         return document;
     }

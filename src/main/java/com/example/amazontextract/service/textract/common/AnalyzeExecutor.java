@@ -33,7 +33,6 @@ public abstract class AnalyzeExecutor {
         List<Block> tableBlocks = blocks.stream().filter(block -> block.blockType().toString().equals("TABLE")).collect(Collectors.toList());
 
         analyzeResult(textractResult, lineBlocks, cellBlocks, wordBlocks, tableBlocks);
-
         ingestInvoicePdfFromTextract.init(textractResult);
 
     }

@@ -44,7 +44,7 @@ public class PdfInvoiceProcessor {
 
             log.info("Waiting for job: {}", startJobId);
 
-            boolean jobFound = false;
+            boolean jobSuccess = false;
 
             //loop until the job status is success.
             do {
@@ -52,7 +52,7 @@ public class PdfInvoiceProcessor {
                     String status = textractService.processDocument(startJobId, textractClient);
                     if (status.equals(SUCCEEDED)) {
                         log.info("Finish job id: {}", startJobId);
-                        jobFound = true;
+                        jobSuccess = true;
                         this.getDocumentAnalysisResults(textractClient, startJobId, pdfFile);
                     } else {
                         Thread.sleep(5000);
@@ -61,7 +61,7 @@ public class PdfInvoiceProcessor {
                     Thread.currentThread().interrupt();
                     log.error("Error processing results", e);
                 }
-            } while (!jobFound);
+            } while (!jobSuccess);
 
             log.info("Finished processing document");
         }

@@ -7,11 +7,6 @@ public class TextractResult {
     private Map<String, String> headerMap;
     private String[][] chargesTable;
 
-    public void TextractResult(Map<String, String> headerMap, String[][] chargesTable) {
-        this.headerMap = headerMap;
-        this.chargesTable = chargesTable;
-    }
-
     public Map<String, String> getHeaderMap() {
         return headerMap;
     }

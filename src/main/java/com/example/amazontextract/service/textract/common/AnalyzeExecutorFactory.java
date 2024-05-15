@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 public class AnalyzeExecutorFactory {
 
     public static final Logger log = LoggerFactory.getLogger(AnalyzeExecutorFactory.class);
+    private static final String EDEMSA = "edemsa";
 
     private final ApplicationContext context;
 
@@ -28,7 +29,7 @@ public class AnalyzeExecutorFactory {
     }
 
     private String getClassNameFromSender(String template) {
-        if ("edemsa".equals(template)) {
+        if (EDEMSA.equals(template)) {
             return EdemsaAnalyzeExecutor.class.getName();
         }
         return null;
