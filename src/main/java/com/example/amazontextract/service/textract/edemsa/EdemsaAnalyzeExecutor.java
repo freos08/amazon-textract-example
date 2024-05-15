@@ -1,9 +1,9 @@
-package com.example.amazontextract.service.module.edemsa;
+package com.example.amazontextract.service.textract.edemsa;
 
 import com.example.amazontextract.domain.TextractResult;
 import com.example.amazontextract.domain.enumeration.EdemsaKey;
-import com.example.amazontextract.service.module.common.AnalyzeExecutor;
-import com.example.amazontextract.service.module.common.TextractTableGenerator;
+import com.example.amazontextract.service.textract.common.AnalyzeExecutor;
+import com.example.amazontextract.service.textract.util.TextractTableGenerator;
 import com.example.amazontextract.service.process.IngestInvoicePdfFromTextract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +21,8 @@ public class EdemsaAnalyzeExecutor extends AnalyzeExecutor {
 
     private final Logger log = LoggerFactory.getLogger(EdemsaAnalyzeExecutor.class);
 
-    private final TextractTableGenerator textractTableGenerator;
-
-    EdemsaAnalyzeExecutor(IngestInvoicePdfFromTextract ingestInvoicePdfFromTextract,
-                          TextractTableGenerator textractTableGenerator) {
+    EdemsaAnalyzeExecutor(IngestInvoicePdfFromTextract ingestInvoicePdfFromTextract) {
         super(ingestInvoicePdfFromTextract);
-        this.textractTableGenerator = textractTableGenerator;
     }
 
     @Override
@@ -49,7 +45,7 @@ public class EdemsaAnalyzeExecutor extends AnalyzeExecutor {
         //iterating over Tables
         for (Block block : tableBlocks) {
             List<Relationship> relationships = block.relationships();
-            String[][] tableMap = textractTableGenerator.generateTableFromRelationship(relationships, cellBlocks, lineBlocks);
+            String[][] tableMap = TextractTableGenerator.generateTableFromRelationship(relationships, cellBlocks, lineBlocks);
 
             if (EdemsaKey.TOTAL_A_PAGAR.getKey().equalsIgnoreCase(tableMap[0][0])) {
                 // header table

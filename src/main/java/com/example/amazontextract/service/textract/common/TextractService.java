@@ -1,4 +1,4 @@
-package com.example.amazontextract.service.module.common;
+package com.example.amazontextract.service.textract.common;
 
 import com.example.amazontextract.domain.PdfFile;
 import org.slf4j.Logger;

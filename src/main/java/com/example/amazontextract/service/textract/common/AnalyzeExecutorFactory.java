@@ -1,6 +1,6 @@
-package com.example.amazontextract.service.module.common;
+package com.example.amazontextract.service.textract.common;
 
-import com.example.amazontextract.service.module.edemsa.EdemsaAnalyzeExecutor;
+import com.example.amazontextract.service.textract.edemsa.EdemsaAnalyzeExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

@@ -79,7 +79,7 @@ public class Invoice implements Serializable {
                 "id=" + id +
                 ", nic='" + nic + '\'' +
                 ", suministro='" + suministro + '\'' +
-                ", numeroFactura=" + numeroFactura +
+                ", numeroFactura='" + numeroFactura + '\'' +
                 ", total='" + total + '\'' +
                 '}';
     }

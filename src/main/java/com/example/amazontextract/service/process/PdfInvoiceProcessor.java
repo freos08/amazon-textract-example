@@ -1,9 +1,9 @@
 package com.example.amazontextract.service.process;
 
 import com.example.amazontextract.domain.PdfFile;
-import com.example.amazontextract.service.module.common.AnalyzeExecutor;
-import com.example.amazontextract.service.module.common.AnalyzeExecutorFactory;
-import com.example.amazontextract.service.module.common.TextractService;
+import com.example.amazontextract.service.textract.common.AnalyzeExecutor;
+import com.example.amazontextract.service.textract.common.AnalyzeExecutorFactory;
+import com.example.amazontextract.service.textract.common.TextractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,33 +16,29 @@ import java.util.List;
 
 @Service
 //@Transactional
-public class ProcessPdfInvoice {
+public class PdfInvoiceProcessor {
 
     @Value("${s3.bucketName}")
     private String bucket;
 
     private static final String SUCCEEDED = "SUCCEEDED";
 
-    private static final Logger log = LoggerFactory.getLogger(ProcessPdfInvoice.class);
+    private static final Logger log = LoggerFactory.getLogger(PdfInvoiceProcessor.class);
 
     private final AnalyzeExecutorFactory analyzeExecutorFactory;
     private final TextractService textractService;
 
-    ProcessPdfInvoice(AnalyzeExecutorFactory analyzeExecutorFactory,
-                      TextractService textractService) {
+    PdfInvoiceProcessor(AnalyzeExecutorFactory analyzeExecutorFactory,
+                        TextractService textractService) {
         this.analyzeExecutorFactory = analyzeExecutorFactory;
         this.textractService = textractService;
     }
 
-    public void init(PdfFile pdfFile) {
-        TextractClient textractClient = textractService.init(pdfFile);
-        this.processDocument(textractClient, bucket, pdfFile.getDocument(), pdfFile);
-    }
-
     //Starts the processing of the input document.
-    private void processDocument(TextractClient textractClient, String bucket, String document, PdfFile pdfFile) {
+    public void processDocument(PdfFile pdfFile) {
         log.info("Start ProcessDocument");
-        String startJobId = textractService.startDocumentAnalysis(textractClient, bucket, document);
+        TextractClient textractClient = textractService.init(pdfFile);
+        String startJobId = textractService.startDocumentAnalysis(textractClient, bucket, pdfFile.getDocument());
 
         if (startJobId != null) {
 
@@ -57,7 +53,7 @@ public class ProcessPdfInvoice {
                     if (status.equals(SUCCEEDED)) {
                         log.info("Finish job id: {}", startJobId);
                         jobFound = true;
-                        getDocumentAnalysisResults(textractClient, startJobId, pdfFile);
+                        this.getDocumentAnalysisResults(textractClient, startJobId, pdfFile);
                     } else {
                         Thread.sleep(5000);
                     }
