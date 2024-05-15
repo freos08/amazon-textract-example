@@ -3,7 +3,6 @@ package com.example.amazontextract.service.process;
 import com.example.amazontextract.domain.Invoice;
 import com.example.amazontextract.domain.TextractResult;
 import com.example.amazontextract.domain.constants.EdemsaConstants;
-import com.example.amazontextract.domain.enumeration.CommonName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

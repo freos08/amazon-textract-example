@@ -60,6 +60,7 @@ public class PdfInvoiceProcessor {
                 } catch (Exception e) {
                     Thread.currentThread().interrupt();
                     log.error("Error processing results", e);
+                    // We should throw a custom exception here
                 }
             } while (!jobSuccess);
 
