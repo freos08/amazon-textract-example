@@ -1,0 +1,116 @@
+package com.example.amazontextract.service.process;
+
+import com.example.amazontextract.domain.PdfFile;
+import com.example.amazontextract.module.common.InvoiceAnalyzeExecutor;
+import com.example.amazontextract.module.common.InvoiceAnalyzeExecutorFactory;
+import com.example.amazontextract.module.common.ProcessPdf;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.textract.TextractClient;
+import software.amazon.awssdk.services.textract.model.Block;
+import software.amazon.awssdk.services.textract.model.TextractException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+//@Transactional
+public class ProcessPdfInvoice {
+
+    @Value("${s3.bucketName}")
+    private String bucket;
+
+    private static final String SUCCEEDED = "SUCCEEDED";
+
+    private static final Logger log = LoggerFactory.getLogger(ProcessPdfInvoice.class);
+
+    private final InvoiceAnalyzeExecutorFactory invoiceAnalyzeExecutorFactory;
+    private final ProcessPdf processPdf;
+
+    ProcessPdfInvoice(InvoiceAnalyzeExecutorFactory invoiceAnalyzeExecutorFactory,
+                      ProcessPdf processPdf) {
+        this.invoiceAnalyzeExecutorFactory = invoiceAnalyzeExecutorFactory;
+        this.processPdf = processPdf;
+    }
+
+    public void init(PdfFile pdfFile) {
+        TextractClient textractClient = processPdf.init(pdfFile);
+        String pdfFileToProcess = pdfFile.getPdfFile();
+        processDocument(textractClient, bucket, pdfFileToProcess, pdfFile);
+    }
+
+    //Starts the processing of the input document.
+    private void processDocument(TextractClient textractClient, String bucket, String document, PdfFile pdfFile) {
+        log.info("Start ProcessDocument");
+        String startJobId = startDocumentAnalysis(textractClient, bucket, document);
+
+        if (startJobId != null) {
+
+            log.info("Waiting for job: {}", startJobId);
+
+            boolean jobFound = false;
+
+            //loop until the job status is success.
+            do {
+                try {
+                    String status = processPdf.processDocument(startJobId, textractClient);
+                    if (status.equals(SUCCEEDED)) {
+                        log.info("Finish job id: {}", startJobId);
+                        jobFound = true;
+                        getDocumentAnalysisResults(textractClient, startJobId, pdfFile);
+                    } else {
+                        Thread.sleep(5000);
+                    }
+                } catch (Exception e) {
+                    Thread.currentThread().interrupt();
+                    log.error(e.getMessage());
+                }
+            } while (!jobFound);
+
+            log.info("Finished processing document");
+        }
+
+    }
+
+    private String startDocumentAnalysis(TextractClient textractClient, String bucket, String document) {
+
+        try {
+            return processPdf.startDocumentAnalysis(textractClient, bucket, document);
+        } catch (TextractException e) {
+            log.error(e.getMessage());
+        }
+
+        return null;
+    }
+
+    //Gets the results of processing started by StartDocumentAnalysis
+    private void getDocumentAnalysisResults(TextractClient textractClient, String startJobId, PdfFile pdfFile) {
+        log.info("Start getting results: {}", startJobId);
+
+        int maxResults = 10000;
+        String paginationToken = null;
+        boolean finished = false;
+        List<Block> blocks = new ArrayList<>();
+
+        //loops until pagination token is null
+        while (!finished) {
+            paginationToken =
+                    processPdf.getDocumentAnalysisResult(maxResults, startJobId, paginationToken, textractClient, blocks);
+            if (paginationToken == null) {
+                finished = true;
+                log.info("Finished all pages document.");
+                InvoiceAnalyzeExecutor executor = null;
+                try {
+                    executor = invoiceAnalyzeExecutorFactory.getInstance(pdfFile.getTemplate());
+                } catch (Exception e) {
+                    log.error("Error getting executor", e);
+                }
+                if (executor != null) {
+                    executor.init(blocks);
+                }
+            }
+        }
+    }
+}

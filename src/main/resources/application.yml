@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: amazon-textract
+
+s3:
+  awsKey: ${AWS_ACCESS_KEY_ID}
+  awsSecret: ${AWS_SECRET_ACCESS_KEY}
+  bucketName: ${BUCKET_NAME}
