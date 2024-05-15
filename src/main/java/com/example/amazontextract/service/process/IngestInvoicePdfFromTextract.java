@@ -2,6 +2,7 @@ package com.example.amazontextract.service.process;
 
 import com.example.amazontextract.domain.Invoice;
 import com.example.amazontextract.domain.TextractResult;
+import com.example.amazontextract.domain.constants.EdemsaConstants;
 import com.example.amazontextract.domain.enumeration.CommonName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +28,11 @@ public class IngestInvoicePdfFromTextract {
         if (textractResult.getHeaderMap() != null) {
 
             Invoice invoice = new Invoice();
-            invoice.setNic(textractResult.getHeaderMap().get(CommonName.NIC.getName()));
-            invoice.setSuministro(textractResult.getHeaderMap().get(CommonName.SUMINISTRO.getName()));
-            invoice.setNumeroFactura(textractResult.getHeaderMap().get(CommonName.NUMERO_FACTURA.getName()));
+            invoice.setNic(textractResult.getHeaderMap().get(EdemsaConstants.NIC));
+            invoice.setSuministro(textractResult.getHeaderMap().get(EdemsaConstants.SUMINISTRO));
+            invoice.setNumeroFactura(textractResult.getHeaderMap().get(EdemsaConstants.NUMERO_FACTURA));
             try {
-                String totalStr = textractResult.getHeaderMap().get(CommonName.TOTAL_A_PAGAR.getName())
+                String totalStr = textractResult.getHeaderMap().get(EdemsaConstants.TOTAL_A_PAGAR)
                         .replace("$", "")
                         .replace(".","")
                         .replace(",",".").trim();

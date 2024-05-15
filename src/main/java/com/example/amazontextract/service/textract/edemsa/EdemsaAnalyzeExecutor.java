@@ -1,10 +1,10 @@
 package com.example.amazontextract.service.textract.edemsa;
 
 import com.example.amazontextract.domain.TextractResult;
-import com.example.amazontextract.domain.enumeration.EdemsaKey;
+import com.example.amazontextract.domain.constants.EdemsaConstants;
+import com.example.amazontextract.service.process.IngestInvoicePdfFromTextract;
 import com.example.amazontextract.service.textract.common.AnalyzeExecutor;
 import com.example.amazontextract.service.textract.util.TextractTableGenerator;
-import com.example.amazontextract.service.process.IngestInvoicePdfFromTextract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,11 +34,11 @@ public class EdemsaAnalyzeExecutor extends AnalyzeExecutor {
 
         for (int x = 0; x < lineBlocks.size(); x ++) {
             Block block = lineBlocks.get(x);
-            if (block.text().equals(EdemsaKey.NIC.getKey())) {
-                headerMap.put(EdemsaKey.NIC.getName(), lineBlocks.get(x + 1).text());
+            if (block.text().equals(EdemsaConstants.NIC)) {
+                headerMap.put(EdemsaConstants.NIC, lineBlocks.get(x + 1).text());
             }
-            if (block.text().equals(EdemsaKey.SUMINISTRO.getKey())) {
-                headerMap.put(EdemsaKey.SUMINISTRO.getName(), lineBlocks.get(x + 1).text());
+            if (block.text().equals(EdemsaConstants.SUMINISTRO)) {
+                headerMap.put(EdemsaConstants.SUMINISTRO, lineBlocks.get(x + 1).text());
             }
         }
 
@@ -47,17 +47,17 @@ public class EdemsaAnalyzeExecutor extends AnalyzeExecutor {
             List<Relationship> relationships = block.relationships();
             String[][] tableMap = TextractTableGenerator.generateTableFromRelationship(relationships, cellBlocks, lineBlocks);
 
-            if (EdemsaKey.TOTAL_A_PAGAR.getKey().equalsIgnoreCase(tableMap[0][0])) {
+            if (EdemsaConstants.TOTAL_A_PAGAR.equalsIgnoreCase(tableMap[0][0])) {
                 // header table
-                headerMap.put(EdemsaKey.TOTAL_A_PAGAR.getName(), tableMap[1][0]);
+                headerMap.put(EdemsaConstants.TOTAL_A_PAGAR, tableMap[1][0]);
             }
 
-            if (tableMap[0][0] != null && tableMap[0][0].startsWith(EdemsaKey.NUMERO_FACTURA.getKey())) {
-                headerMap.put(EdemsaKey.NUMERO_FACTURA.getName(),
-                        tableMap[0][0].split(EdemsaKey.NUMERO_FACTURA.getKey())[1]);
+            if (tableMap[0][0] != null && tableMap[0][0].startsWith(EdemsaConstants.NUMERO_FACTURA)) {
+                headerMap.put(EdemsaConstants.NUMERO_FACTURA,
+                        tableMap[0][0].split(EdemsaConstants.NUMERO_FACTURA)[1]);
             }
 
-            if (EdemsaKey.CONCEPTOS_ELECTRICOS.getKey().equalsIgnoreCase(tableMap[0][0]) && tableMap[0].length == 2) {
+            if (EdemsaConstants.CONCEPTOS_ELECTRICOS.equalsIgnoreCase(tableMap[0][0]) && tableMap[0].length == 2) {
                 chargeTable = tableMap;
             }
         }
